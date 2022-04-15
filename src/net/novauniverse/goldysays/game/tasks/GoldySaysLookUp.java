@@ -16,7 +16,7 @@ public class GoldySaysLookUp extends GoldySaysTask {
 
     @Override
     public String getDisplayName() {
-        return ChatColor.BLUE + "Look Up!";
+        return ChatColor.AQUA + "Look Up!";
     }
 
     @Override

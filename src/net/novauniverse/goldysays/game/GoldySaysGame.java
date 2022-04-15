@@ -33,19 +33,6 @@ public class GoldySaysGame extends MapGame implements Listener {
 		this.ended = false;
 	}
 
-	// NoteBlock Sounds
-	//------------------------------------------------------------------------
-	public void taskStartSound(Player player) {
-		player.playNote(player.getLocation(), Instrument.PIANO, Note.sharp(1, Note.Tone.G));
-	}
-
-	public void taskCompleteSound(Player player) {
-		player.playSound(player.getLocation(), Sound.CAT_MEOW, 50, 50);
-	}
-
-	public void taskFailedSound(Player player) {
-		player.playNote(player.getLocation(), Instrument.BASS_DRUM, Note.sharp(1, Note.Tone.G));
-	}
 
 	// Task Player Checks
 	//------------------------------------------------------------------------
@@ -74,7 +61,11 @@ public class GoldySaysGame extends MapGame implements Listener {
 
 	@Override
 	public String getDisplayName() {
-		return "Goldy Says";
+		return ChatColor.GOLD + "Goldy Says";
+	}
+
+	public String getDescription() {
+		return ChatColor.YELLOW + "Totally not a Ripoff of simon says!";
 	}
 
 	@Override
@@ -151,7 +142,7 @@ public class GoldySaysGame extends MapGame implements Listener {
 		// Title Screen
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 			VersionIndependantUtils.get().sendTitle(player, ChatColor.YELLOW +
-					this.getDisplayName(), ChatColor.GOLD + "Ripoff of simon says! By Goldy!", 10, 5*20, 10);
+					this.getDisplayName(), this.getDescription(), 10, 5*20, 10);
 
 			// Cat Meow
 			player.playSound(player.getLocation(), Sound.CAT_PURREOW, 50, 50);

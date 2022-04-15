@@ -2,8 +2,7 @@ package net.novauniverse.goldysays.game;
 
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import javax.sql.rowset.spi.SyncResolver;
@@ -28,7 +27,44 @@ public class GoldySaysTask {
         return "Goldy Says!";
     }
 
-    public void toggleTask(String taskName) throws IllegalAccessException, NoSuchFieldException {
+    public int getDuration() {
+        return 5;
+    }
+
+    // Task Completion & Fail
+    //------------------------------------------------------------------------
+    public void taskStart(Player player) {
+        player.sendMessage(ChatColor.YELLOW + "[" + game.getDisplayName() + ChatColor.YELLOW + "] " +
+                ChatColor.ITALIC + ChatColor.BOLD + this.getDisplayName());
+
+        player.playNote(player.getLocation(), Instrument.PIANO, Note.sharp(1, Note.Tone.G));
+    }
+
+    public void taskComplete(Player player) {
+        player.sendMessage(ChatColor.YELLOW + "[" + game.getDisplayName() + ChatColor.YELLOW + "] " +
+                ChatColor.GREEN + "Task Completed!");
+
+        // Complete Sound
+        player.playSound(player.getLocation(), Sound.CAT_MEOW, 50, 50);
+
+        // Complete Title
+        VersionIndependantUtils.get().sendTitle(player, ChatColor.GREEN +
+                "Task Completed!", "", 5, 3 * 20, 5);
+    }
+
+    public void taskFailed(Player player) {
+        player.sendMessage(ChatColor.YELLOW + "[" + game.getDisplayName() + ChatColor.YELLOW + "] " +
+                ChatColor.DARK_GRAY + "Task Failed!");
+
+        // Fail Sound
+        player.playNote(player.getLocation(), Instrument.BASS_DRUM, Note.sharp(1, Note.Tone.G));
+
+        // Fail Title
+        VersionIndependantUtils.get().sendTitle(player, ChatColor.DARK_GRAY +
+                "Task Failed!", "", 5, 3 * 20, 5);
+    }
+
+    public void toggleTaskEvent(String taskName) throws IllegalAccessException, NoSuchFieldException {
         // Toggles the task on and off.
         Class<?> class_ = game.getClass();
 
@@ -41,50 +77,62 @@ public class GoldySaysTask {
         }
     }
 
+    public void doBeforeTask() {
+        /** Override this to prepare things before the actual task starts. **/
+    }
+
+    public void doAfterTask() {
+        /** Override this to do things after the task is done. **/
+    }
+
     public void startTask() {
-        Log.debug(getDisplayName() + " task has started.");
-        System.out.println(getDisplayName() + " task has started.");
+        Bukkit.getServer().getScheduler().runTaskLater(game.getPlugin(), this::doBeforeTask, 5*20);
 
         Bukkit.getServer().getScheduler().runTaskLater(game.getPlugin(), () -> {
-            // Start Task
+            Log.debug(this.getDisplayName() + " task has started.");
+
+            // Start Task Event Handler
             try {
-                this.toggleTask(getCodeName());
+                this.toggleTaskEvent(getCodeName());
             } catch (IllegalAccessException | NoSuchFieldException e) {
                 throw new RuntimeException(e);
             }
 
             // Show Start Text
             for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+                this.taskStart(player);
+
                 VersionIndependantUtils.get().sendTitle(player,
-                        getDisplayName(), getDescription(), 5, 3 * 20, 5);
+                        this.getDisplayName(), this.getDescription(), 5, 3 * 20, 5);
             }
-        }, 5*20);
+        }, 6*20);
 
         Bukkit.getServer().getScheduler().runTaskLater(game.getPlugin(), () -> {
-            // Complete Task
+            Log.debug(this.getDisplayName() + " task has ended.");
+
+            // Toggle Task Event Handler off.
+            //------------------------
             try {
-                this.toggleTask(getCodeName());
+                this.toggleTaskEvent(getCodeName());
             } catch (IllegalAccessException | NoSuchFieldException e) {
                 throw new RuntimeException(e);
             }
 
-            // Show Completed/Failed Text
-            for (Player player_2 : Bukkit.getServer().getOnlinePlayers()) {
-                if (game.completedPlayers.contains(player_2.getUniqueId())) {
-                    game.taskCompleteSound(player_2);
-
-                    VersionIndependantUtils.get().sendTitle(player_2, ChatColor.GREEN +
-                            "Task Completed!", "", 5, 3 * 20, 5);
+            // Tell players if they have failed or completed.
+            //-------------------------------------------------
+            for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+                if (game.completedPlayers.contains(player.getUniqueId())) {
+                    this.taskComplete(player);
                 } else {
-                    game.taskFailedSound(player_2);
+                    this.taskFailed(player);
 
-                    VersionIndependantUtils.get().sendTitle(player_2, ChatColor.DARK_GRAY +
-                            "Task Failed!", "", 5, 3 * 20, 5);
                 }
             }
 
             // Clear completed players list.
             game.completedPlayers.clear();
-        }, 10*20);
+
+            this.doAfterTask();
+        }, (6 + this.getDuration())*20);
     }
 }
