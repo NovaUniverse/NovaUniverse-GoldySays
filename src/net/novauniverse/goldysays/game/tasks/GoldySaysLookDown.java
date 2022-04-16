@@ -10,20 +10,19 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.UUID;
 
-public class GoldySaysLookUp extends GoldySaysTask {
-    public GoldySaysLookUp(GoldySaysGame game) {
+public class GoldySaysLookDown extends GoldySaysTask {
+    public GoldySaysLookDown(GoldySaysGame game) {
         super(game);
     }
 
     @EventHandler
-    public void LookUpPlayerCheck(PlayerMoveEvent event) {
+    public void LookDownPlayerCheck(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
 
         if (game.getPlayers().contains(playerId)) {
-
             if (this.completedPlayers.contains(playerId) == false) {
-                if (event.getFrom().getPitch() < -65) {
+                if (event.getFrom().getPitch() > 65) {
                     player.sendMessage( ChatColor.LIGHT_PURPLE + "Goldy \uD83D\uDC4D (▰˘◡˘▰)");
                     player.playSound(player.getLocation(), Sound.LEVEL_UP, 1F, 1F);
 
@@ -35,12 +34,12 @@ public class GoldySaysLookUp extends GoldySaysTask {
 
     @Override
     public String getCodeName() {
-        return "lookUp";
+        return "lookDown";
     }
 
     @Override
     public String getDisplayName() {
-        return ChatColor.AQUA + "Look Up!";
+        return ChatColor.DARK_GREEN + "Look Down!";
     }
 
     @Override

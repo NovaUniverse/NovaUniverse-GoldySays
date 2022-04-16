@@ -117,6 +117,11 @@
 			<id>novauniverse-group</id>
 			<url>https://nexus.novauniverse.net/repository/novauniverse-group/</url>
 		</repository>
+
+		<repository>
+			<id>everything</id>
+			<url>https://repo.citizensnpcs.co/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -162,6 +167,14 @@
 			<groupId>net.novauniverse.novacore</groupId>
 			<artifactId>novacore-gameengine</artifactId>
 			<version>2.0.0-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>net.citizensnpcs</groupId>
+			<artifactId>citizens-main</artifactId>
+			<version>2.0.28-SNAPSHOT</version>
+			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

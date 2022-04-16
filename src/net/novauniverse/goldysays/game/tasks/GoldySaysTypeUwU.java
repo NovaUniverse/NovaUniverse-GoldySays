@@ -6,26 +6,26 @@ import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.UUID;
 
-public class GoldySaysLookUp extends GoldySaysTask {
-    public GoldySaysLookUp(GoldySaysGame game) {
+public class GoldySaysTypeUwU extends GoldySaysTask {
+    public GoldySaysTypeUwU(GoldySaysGame game) {
         super(game);
     }
 
     @EventHandler
-    public void LookUpPlayerCheck(PlayerMoveEvent event) {
+    public void LookUpPlayerCheck(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
 
         if (game.getPlayers().contains(playerId)) {
 
             if (this.completedPlayers.contains(playerId) == false) {
-                if (event.getFrom().getPitch() < -65) {
+                if (event.getMessage().equalsIgnoreCase("UwU")) {
                     player.sendMessage( ChatColor.LIGHT_PURPLE + "Goldy \uD83D\uDC4D (▰˘◡˘▰)");
-                    player.playSound(player.getLocation(), Sound.LEVEL_UP, 1F, 1F);
+                    player.playSound(player.getLocation(), Sound.CAT_PURR, 1F, 1F);
 
                     this.taskComplete(player);
                 }
@@ -35,16 +35,16 @@ public class GoldySaysLookUp extends GoldySaysTask {
 
     @Override
     public String getCodeName() {
-        return "lookUp";
+        return "typeUwU";
     }
 
     @Override
     public String getDisplayName() {
-        return ChatColor.AQUA + "Look Up!";
+        return ChatColor.AQUA + "Type UwU in Chat!";
     }
 
     @Override
     public String getDescription() {
-        return ChatColor.GOLD + "Goldy Says!";
+        return ChatColor.GOLD + "Goldy Commands!";
     }
 }

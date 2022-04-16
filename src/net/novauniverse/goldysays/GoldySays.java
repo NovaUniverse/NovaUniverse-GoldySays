@@ -1,7 +1,15 @@
 package net.novauniverse.goldysays;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
+import net.novauniverse.goldysays.game.GoldySaysTask;
+import net.novauniverse.goldysays.game.tasks.GoldySaysKillPigs;
+import net.novauniverse.goldysays.game.tasks.GoldySaysLookDown;
+import net.novauniverse.goldysays.game.tasks.GoldySaysLookUp;
+import net.novauniverse.goldysays.game.tasks.GoldySaysTypeUwU;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -20,6 +28,8 @@ import net.zeeraa.novacore.spigot.module.ModuleManager;
 
 public class GoldySays extends JavaPlugin implements Listener {
 	private static GoldySays instance;
+
+    protected List<Class<? extends GoldySaysTask>> tasks = new ArrayList();
 	
 	public static GoldySays getInstance() {
 		return instance;
@@ -30,12 +40,21 @@ public class GoldySays extends JavaPlugin implements Listener {
 	public GoldySaysGame getGame() {
 		return game;
 	}
-	
-	@Override
+
+    public List<Class<? extends GoldySaysTask>> getTasks() {
+        return tasks;
+    }
+
+    @Override
 	public void onEnable() {
 		GoldySays.instance = this;
 
 		saveDefaultConfig();
+
+        tasks.add(GoldySaysKillPigs.class);
+        tasks.add(GoldySaysLookUp.class);
+        tasks.add(GoldySaysLookDown.class);
+        tasks.add(GoldySaysTypeUwU.class);
         
         File mapFolder = new File(this.getDataFolder().getPath() + File.separator + "Maps");
         File worldFolder = new File(this.getDataFolder().getPath() + File.separator + "Worlds");

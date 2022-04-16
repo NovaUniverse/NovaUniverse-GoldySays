@@ -4,5 +4,5 @@ description: Goldy Say's
 version: 1.0
 author: The Golden Pro
 api-version: 1.13
-depend: [NovaCore, NovaCoreGameEngine]
+depend: [NovaCore, NovaCoreGameEngine, Citizens]
 softdepend: [NovaGamesTarget]
