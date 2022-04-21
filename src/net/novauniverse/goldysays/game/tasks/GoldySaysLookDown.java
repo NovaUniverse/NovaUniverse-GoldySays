@@ -22,7 +22,7 @@ public class GoldySaysLookDown extends GoldySaysTask {
 
         if (game.getPlayers().contains(playerId)) {
             if (this.completedPlayers.contains(playerId) == false) {
-                if (event.getFrom().getPitch() > 65) {
+                if (event.getFrom().getPitch() > 50) {
                     player.sendMessage( ChatColor.LIGHT_PURPLE + "Goldy \uD83D\uDC4D (▰˘◡˘▰)");
                     player.playSound(player.getLocation(), Sound.LEVEL_UP, 1F, 1F);
 
@@ -45,5 +45,10 @@ public class GoldySaysLookDown extends GoldySaysTask {
     @Override
     public String getDescription() {
         return ChatColor.GOLD + "Goldy Says!";
+    }
+
+    @Override
+    public int getDuration() {
+        return 2;
     }
 }

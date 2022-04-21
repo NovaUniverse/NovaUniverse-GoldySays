@@ -10,22 +10,21 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.UUID;
 
-public class GoldySaysTypeUwU extends GoldySaysTask {
-    public GoldySaysTypeUwU(GoldySaysGame game) {
+public class GoldySaysTypeCat extends GoldySaysTask {
+    public GoldySaysTypeCat(GoldySaysGame game) {
         super(game);
     }
 
     @EventHandler
-    public void PlayerTypeUwUCheck(AsyncPlayerChatEvent event) {
+    public void PlayerTypeCatCheck(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
 
         if (game.getPlayers().contains(playerId)) {
 
             if (this.completedPlayers.contains(playerId) == false) {
-                if (event.getMessage().equalsIgnoreCase("UwU")) {
-                    player.sendMessage( ChatColor.LIGHT_PURPLE + "Goldy \uD83D\uDC4D (▰˘◡˘▰)");
-                    player.playSound(player.getLocation(), Sound.CAT_PURR, 1F, 1F);
+                if (event.getMessage().equalsIgnoreCase("cat")) {
+                    player.sendMessage( ChatColor.YELLOW + "Meow!");
 
                     this.taskComplete(player);
                 }
@@ -35,12 +34,12 @@ public class GoldySaysTypeUwU extends GoldySaysTask {
 
     @Override
     public String getCodeName() {
-        return "typeUwU";
+        return "typeCat";
     }
 
     @Override
     public String getDisplayName() {
-        return ChatColor.AQUA + "Type UwU in Chat!";
+        return ChatColor.YELLOW + "Type Cat in Chat!";
     }
 
     @Override

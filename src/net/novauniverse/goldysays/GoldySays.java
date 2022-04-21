@@ -6,10 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import net.novauniverse.goldysays.game.GoldySaysTask;
-import net.novauniverse.goldysays.game.tasks.GoldySaysKillPigs;
-import net.novauniverse.goldysays.game.tasks.GoldySaysLookDown;
-import net.novauniverse.goldysays.game.tasks.GoldySaysLookUp;
-import net.novauniverse.goldysays.game.tasks.GoldySaysTypeUwU;
+import net.novauniverse.goldysays.game.tasks.*;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -55,6 +52,7 @@ public class GoldySays extends JavaPlugin implements Listener {
         tasks.add(GoldySaysLookUp.class);
         tasks.add(GoldySaysLookDown.class);
         tasks.add(GoldySaysTypeUwU.class);
+        tasks.add(GoldySaysTypeCat.class);
         
         File mapFolder = new File(this.getDataFolder().getPath() + File.separator + "Maps");
         File worldFolder = new File(this.getDataFolder().getPath() + File.separator + "Worlds");

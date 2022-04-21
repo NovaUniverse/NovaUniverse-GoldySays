@@ -3,7 +3,10 @@ package net.novauniverse.goldysays.game;
 import net.novauniverse.goldysays.GoldySays;
 import net.zeeraa.novacore.commons.log.Log;
 import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
+import net.zeeraa.novacore.spigot.utils.PlayerUtils;
 import org.bukkit.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -49,6 +52,16 @@ public abstract class GoldySaysTask implements Listener {
                 ChatColor.ITALIC + ChatColor.BOLD + this.getDisplayName());
 
         player.playNote(player.getLocation(), Instrument.PIANO, Note.sharp(1, Note.Tone.G));
+
+        // Clear dropped items.
+        World world = Bukkit.getServer().getWorld("world");
+        List<Entity> entList = world.getEntities();
+
+        for(Entity current : entList) {
+            if (current instanceof Item) {
+                current.remove();
+            }
+        }
     }
 
     public void taskComplete(Player player) {
@@ -63,6 +76,8 @@ public abstract class GoldySaysTask implements Listener {
         // Complete Title
         VersionIndependantUtils.get().sendTitle(player, ChatColor.GREEN +
                 "Task Completed!", "", 5, 3 * 20, 5);
+
+        PlayerUtils.clearPlayerInventory(player);
     }
 
     public void taskFailed(Player player) {
@@ -77,6 +92,8 @@ public abstract class GoldySaysTask implements Listener {
         // Fail Title
         VersionIndependantUtils.get().sendTitle(player, ChatColor.DARK_GRAY +
                 "Task Failed!", "", 5, 3 * 20, 5);
+
+        PlayerUtils.clearPlayerInventory(player);
     }
 
     public void doBeforeTask() {

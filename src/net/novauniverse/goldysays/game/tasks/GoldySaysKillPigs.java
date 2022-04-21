@@ -8,10 +8,7 @@ import net.zeeraa.novacore.spigot.utils.ItemBuilder;
 import net.zeeraa.novacore.spigot.utils.LocationUtils;
 import net.zeeraa.novacore.spigot.utils.PlayerUtils;
 import net.zeeraa.novacore.spigot.utils.VectorArea;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
@@ -46,24 +43,50 @@ public class GoldySaysKillPigs extends GoldySaysTask {
             if (event.getEntity().getKiller() instanceof Player) {
                 Player player = (Player) event.getEntity().getKiller();
                 if (failedPlayers.contains(player.getUniqueId()) || completedPlayers.contains(player.getUniqueId())) {
+                    Location location = event.getEntity().getLocation();
+
+                    if (event.getEntity() instanceof Sheep) {
+                        this.spawnSheep(location);
+                    }
+
+                    if (event.getEntity() instanceof Pig) {
+                        this.spawnPig(location);
+                    }
+
                     return;
                 }
 
                 if (event.getEntity() instanceof Sheep) {
-                    player.sendMessage(ChatColor.RED + TextUtils.ICON_SKULL_AND_CROSSBONES +
-                            " You dumb dumb, I said don't kill the SHEEP!");
+                    player.sendMessage(ChatColor.RED +
+                            "You dumb dumb, I said don't kill the SHEEP!");
+
+                    PlayerUtils.clearPlayerInventory(player);
                     taskFailed(player);
                 }
 
                 if (event.getEntity() instanceof Pig) {
-                    player.sendMessage(ChatColor.LIGHT_PURPLE + TextUtils.ICON_SWORDS +
-                            " Nice!");
+                    player.sendMessage(ChatColor.LIGHT_PURPLE +
+                            "Good Job!");
                     taskComplete(player);
                 }
 
             }
         }
     }
+
+    public void spawnSheep(Location location) {
+        Sheep sheep = (Sheep) location.getWorld().spawnEntity(location, EntityType.SHEEP);
+        VersionIndependantUtils.get().setEntityMaxHealth(sheep, 1);
+        sheep.setCustomName(ChatColor.LIGHT_PURPLE + "Pig");
+        sheep.setColor(DyeColor.PINK);
+        sheep.setHealth(1);
+    }
+
+    public void spawnPig(Location location) {
+        Pig pig = (Pig) location.getWorld().spawnEntity(location, EntityType.PIG);
+        pig.setCustomName(ChatColor.LIGHT_PURPLE + "Pig");
+    }
+
 
     @Override
     public int getDuration() {
@@ -77,15 +100,13 @@ public class GoldySaysKillPigs extends GoldySaysTask {
 
         for (int i = 0; i < game.getPlayers().size(); i++) {
             Location location = LocationUtils.getLocation(game.getWorld(), area.getRandomVectorWithin());
-            location.getWorld().spawnEntity(location, EntityType.PIG);
+            this.spawnPig(location);
         }
 
         // Spawn in Sheep.
         for (int i = 0; i < game.getPlayers().size(); i++) {
             Location location = LocationUtils.getLocation(game.getWorld(), area.getRandomVectorWithin());
-            Sheep sheep = (Sheep) location.getWorld().spawnEntity(location, EntityType.SHEEP);
-            VersionIndependantUtils.get().setEntityMaxHealth(sheep, 1);
-            sheep.setHealth(1);
+            this.spawnSheep(location);
         }
 
         // Give players sword.
