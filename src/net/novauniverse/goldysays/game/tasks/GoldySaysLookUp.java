@@ -52,4 +52,7 @@ public class GoldySaysLookUp extends GoldySaysTask {
     public int getDuration() {
         return 2;
     }
+
+    @Override
+    public int getLevel() { return 1;}
 }

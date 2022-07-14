@@ -46,4 +46,7 @@ public class GoldySaysTypeCat extends GoldySaysTask {
     public String getDescription() {
         return ChatColor.GOLD + "Goldy Commands!";
     }
+
+    @Override
+    public int getLevel() { return 1;}
 }

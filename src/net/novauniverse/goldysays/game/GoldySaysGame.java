@@ -5,7 +5,7 @@ import net.novauniverse.goldysays.game.tasks.GoldySaysKillPigs;
 import net.novauniverse.goldysays.game.tasks.GoldySaysLookDown;
 import net.novauniverse.goldysays.game.tasks.GoldySaysLookUp;
 import net.zeeraa.novacore.commons.log.Log;
-import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import net.citizensnpcs.api.CitizensAPI;
@@ -21,11 +21,15 @@ import net.zeeraa.novacore.spigot.gameengine.module.modules.game.GameEndReason;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.MapGame;
 import net.zeeraa.novacore.spigot.gameengine.module.modules.game.elimination.PlayerQuitEliminationAction;
 import net.zeeraa.novacore.spigot.utils.PlayerUtils;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -39,6 +43,13 @@ public class GoldySaysGame extends MapGame implements Listener {
 	private boolean ended;
 
 	private NPC goldy;
+
+	private int taskCount = 0;
+
+	private int currentLevel = 1;
+	private int previousLevel = 1;
+
+	public boolean allowDropItem = false;
 	
 	public GoldySaysGame() {
 		super(GoldySays.getInstance());
@@ -63,8 +74,17 @@ public class GoldySaysGame extends MapGame implements Listener {
 	public void onPlayerDropItem(PlayerDropItemEvent e) {
 		if (hasStarted()) {
 			if (e.getPlayer().getGameMode() != GameMode.CREATIVE) {
-				e.setCancelled(true);
+				if (!this.allowDropItem) {
+					e.setCancelled(true);
+				}
 			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void removeMobDrops(EntityDeathEvent e) {
+		if (hasStarted()) {
+			e.getDrops().clear();
 		}
 	}
 
@@ -85,6 +105,20 @@ public class GoldySaysGame extends MapGame implements Listener {
 			}
 		}
 	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onDoorOpen(PlayerInteractEvent e) {
+		if (hasStarted()) {
+			if (e.getPlayer().getGameMode() != GameMode.CREATIVE) {
+				if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+					if (e.getClickedBlock().getType() == Material.ACACIA_DOOR) {
+						e.setCancelled(true);
+					}
+				}
+			}
+		}
+	}
+
 
 	@Override
 	public PlayerQuitEliminationAction getPlayerQuitEliminationAction() {
@@ -171,7 +205,7 @@ public class GoldySaysGame extends MapGame implements Listener {
 
 		// Title Screen
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-			VersionIndependantUtils.get().sendTitle(player, ChatColor.GOLD +
+			VersionIndependentUtils.get().sendTitle(player, ChatColor.GOLD +
 					"Goldy Says", ChatColor.YELLOW + "Totally not a Ripoff of simon says!",
 					10, 5*20, 10);
 
@@ -215,9 +249,51 @@ public class GoldySaysGame extends MapGame implements Listener {
 	}
 
 	private void startNextTask() {
-		GoldySaysTask task = goldySaysTasks.remove(0);
-		task.startTask();
-		Log.debug("Starting next task " + task.getCodeName());
+		int currentLevel = this.getCurrentLevel();
+
+		if (currentLevel > this.previousLevel) {
+			// Level Up Message
+			for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+				player.sendMessage( ChatColor.BOLD + "" + ChatColor.RED + "Level " + currentLevel);
+
+				// Cat Meow
+				player.playSound(player.getLocation(), Sound.GLASS, 50, 50);
+			}
+		}
+
+		// Find task for current level.
+		for (int i = 0; i < goldySaysTasks.size(); i++) {
+			GoldySaysTask task = goldySaysTasks.get(0);
+
+			if (task.getLevel() == currentLevel) {
+				task.startTask();
+				Log.debug("Starting next task " + task.getCodeName());
+				goldySaysTasks.remove(0);
+				this.taskCount += 1;
+
+				// Just debugging shit.
+				this.getWorld().getPlayers().get(0).sendMessage(goldySaysTasks.toString());
+				this.getWorld().getPlayers().get(0).sendMessage(ChatColor.GREEN + String.valueOf(taskCount));
+
+				break;
+			}
+
+			else {
+				Collections.shuffle(goldySaysTasks);
+			}
+		}
+	}
+
+	private int getCurrentLevel() {
+		if (this.taskCount >= 5) {
+			this.currentLevel = 2;
+		}
+
+		if (this.taskCount >= 10) {
+			this.currentLevel = 3;
+		}
+
+		return this.currentLevel;
 	}
 
 	@EventHandler

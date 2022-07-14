@@ -53,6 +53,7 @@ public class GoldySays extends JavaPlugin implements Listener {
         tasks.add(GoldySaysLookDown.class);
         tasks.add(GoldySaysTypeUwU.class);
         tasks.add(GoldySaysTypeCat.class);
+        tasks.add(GoldySaysCraftGoldSword.class);
         
         File mapFolder = new File(this.getDataFolder().getPath() + File.separator + "Maps");
         File worldFolder = new File(this.getDataFolder().getPath() + File.separator + "Worlds");

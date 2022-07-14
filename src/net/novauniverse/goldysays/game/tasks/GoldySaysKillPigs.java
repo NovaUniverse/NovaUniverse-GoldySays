@@ -2,8 +2,7 @@ package net.novauniverse.goldysays.game.tasks;
 
 import net.novauniverse.goldysays.game.GoldySaysGame;
 import net.novauniverse.goldysays.game.GoldySaysTask;
-import net.zeeraa.novacore.commons.utils.TextUtils;
-import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.utils.ItemBuilder;
 import net.zeeraa.novacore.spigot.utils.LocationUtils;
 import net.zeeraa.novacore.spigot.utils.PlayerUtils;
@@ -76,7 +75,7 @@ public class GoldySaysKillPigs extends GoldySaysTask {
 
     public void spawnSheep(Location location) {
         Sheep sheep = (Sheep) location.getWorld().spawnEntity(location, EntityType.SHEEP);
-        VersionIndependantUtils.get().setEntityMaxHealth(sheep, 1);
+        VersionIndependentUtils.get().setEntityMaxHealth(sheep, 1);
         sheep.setCustomName(ChatColor.LIGHT_PURPLE + "Pig");
         sheep.setColor(DyeColor.PINK);
         sheep.setHealth(1);
@@ -87,11 +86,13 @@ public class GoldySaysKillPigs extends GoldySaysTask {
         pig.setCustomName(ChatColor.LIGHT_PURPLE + "Pig");
     }
 
-
     @Override
     public int getDuration() {
         return 6;
     }
+
+    @Override
+    public int getLevel() { return 1;}
 
     @Override
     public void doBeforeTask() {

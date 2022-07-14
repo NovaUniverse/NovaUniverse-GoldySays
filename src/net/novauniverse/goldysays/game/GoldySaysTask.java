@@ -2,7 +2,7 @@ package net.novauniverse.goldysays.game;
 
 import net.novauniverse.goldysays.GoldySays;
 import net.zeeraa.novacore.commons.log.Log;
-import net.zeeraa.novacore.spigot.abstraction.VersionIndependantUtils;
+import net.zeeraa.novacore.spigot.abstraction.VersionIndependentUtils;
 import net.zeeraa.novacore.spigot.utils.PlayerUtils;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -36,6 +36,8 @@ public abstract class GoldySaysTask implements Listener {
     public int getDuration() {
         return 5;
     }
+
+    public int getLevel() { return 1; }
 
     public List<UUID> getCompletedPlayers() {
         return completedPlayers;
@@ -74,7 +76,7 @@ public abstract class GoldySaysTask implements Listener {
         player.playSound(player.getLocation(), Sound.CAT_MEOW, 1F, 2F);
 
         // Complete Title
-        VersionIndependantUtils.get().sendTitle(player, ChatColor.GREEN +
+        VersionIndependentUtils.get().sendTitle(player, ChatColor.GREEN +
                 "Task Completed!", "", 5, 3 * 20, 5);
 
         PlayerUtils.clearPlayerInventory(player);
@@ -90,7 +92,7 @@ public abstract class GoldySaysTask implements Listener {
         player.playNote(player.getLocation(), Instrument.BASS_DRUM, Note.sharp(1, Note.Tone.G));
 
         // Fail Title
-        VersionIndependantUtils.get().sendTitle(player, ChatColor.DARK_GRAY +
+        VersionIndependentUtils.get().sendTitle(player, ChatColor.DARK_GRAY +
                 "Task Failed!", "", 5, 3 * 20, 5);
 
         PlayerUtils.clearPlayerInventory(player);
@@ -113,7 +115,7 @@ public abstract class GoldySaysTask implements Listener {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
             this.taskStart(player);
 
-            VersionIndependantUtils.get().sendTitle(player,
+            VersionIndependentUtils.get().sendTitle(player,
                     this.getDisplayName(), this.getDescription(), 5, 3 * 20, 5);
         }
 
